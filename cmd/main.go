@@ -178,13 +178,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := (&controller.WidgetReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "Failed to create controller", "controller", "widget")
-		os.Exit(1)
-	}
+	
 	if err := (&controller.MetricAutoscalerReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
