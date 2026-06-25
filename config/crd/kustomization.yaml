@@ -3,6 +3,7 @@
 # It should be run by config/default
 resources:
 - bases/apps.yourdomain.dev_widgets.yaml
+- bases/apps.yourdomain.dev_metricautoscalers.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patches:

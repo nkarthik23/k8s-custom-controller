@@ -24,27 +24,39 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// WidgetSpec defines the desired state of Widget
-type WidgetSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-	// The following markers will use OpenAPI v3 schema to validate the value
-	// More info: https://book.kubebuilder.io/reference/markers/crd-validation.html
+// MetricAutoscalerSpec defines the desired state of MetricAutoscaler
+type MetricAutoscalerSpec struct {
+	// TargetDeployment is the name of the Deployment this autoscaler will scale.
+	// +required
+	TargetDeployment string `json:"targetDeployment"`
 
-	// foo is an example field of Widget. Edit widget_types.go to remove/update
+	// PrometheusQuery is the PromQL query used to fetch the current metric value.
+	// +required
+	PrometheusQuery string `json:"prometheusQuery"`
+
+	// Threshold is the metric value above which the deployment scales up.
+	// +required
+	Threshold string `json:"threshold"`
+
+	// MinReplicas is the minimum number of replicas allowed.
 	// +optional
-	Foo *string `json:"foo,omitempty"`
+	// +kubebuilder:default=1
+	MinReplicas int32 `json:"minReplicas,omitempty"`
+
+	// MaxReplicas is the maximum number of replicas allowed.
+	// +required
+	MaxReplicas int32 `json:"maxReplicas"`
 }
 
-// WidgetStatus defines the observed state of Widget.
-type WidgetStatus struct {
+// MetricAutoscalerStatus defines the observed state of MetricAutoscaler.
+type MetricAutoscalerStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// For Kubernetes API conventions, see:
 	// https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties
 
-	// conditions represent the current state of the Widget resource.
+	// conditions represent the current state of the MetricAutoscaler resource.
 	// Each condition has a unique type and reflects the status of a specific aspect of the resource.
 	//
 	// Standard condition types include:
@@ -62,35 +74,35 @@ type WidgetStatus struct {
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 
-// Widget is the Schema for the widgets API
-type Widget struct {
+// MetricAutoscaler is the Schema for the metricautoscalers API
+type MetricAutoscaler struct {
 	metav1.TypeMeta `json:",inline"`
 
 	// metadata is a standard object metadata
 	// +optional
 	metav1.ObjectMeta `json:"metadata,omitzero"`
 
-	// spec defines the desired state of Widget
+	// spec defines the desired state of MetricAutoscaler
 	// +required
-	Spec WidgetSpec `json:"spec"`
+	Spec MetricAutoscalerSpec `json:"spec"`
 
-	// status defines the observed state of Widget
+	// status defines the observed state of MetricAutoscaler
 	// +optional
-	Status WidgetStatus `json:"status,omitzero"`
+	Status MetricAutoscalerStatus `json:"status,omitzero"`
 }
 
 // +kubebuilder:object:root=true
 
-// WidgetList contains a list of Widget
-type WidgetList struct {
+// MetricAutoscalerList contains a list of MetricAutoscaler
+type MetricAutoscalerList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitzero"`
-	Items           []Widget `json:"items"`
+	Items           []MetricAutoscaler `json:"items"`
 }
 
 func init() {
 	SchemeBuilder.Register(func(s *runtime.Scheme) error {
-		s.AddKnownTypes(SchemeGroupVersion, &Widget{}, &WidgetList{})
+		s.AddKnownTypes(SchemeGroupVersion, &MetricAutoscaler{}, &MetricAutoscalerList{})
 		return nil
 	})
 }

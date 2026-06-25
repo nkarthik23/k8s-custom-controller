@@ -30,7 +30,7 @@ import (
 	appsv1 "github.com/nkarthik23/k8s-custom-controller/api/v1"
 )
 
-var _ = Describe("Widget Controller", func() {
+var _ = Describe("MetricAutoscaler Controller", func() {
 	Context("When reconciling a resource", func() {
 		const (
 			resourceName      = "test-resource"
@@ -43,13 +43,13 @@ var _ = Describe("Widget Controller", func() {
 			Name:      resourceName,
 			Namespace: resourceNamespace,
 		}
-		widget := &appsv1.Widget{}
+		metricautoscaler := &appsv1.MetricAutoscaler{}
 
 		BeforeEach(func() {
-			By("creating the custom resource for the Kind Widget")
-			err := k8sClient.Get(ctx, typeNamespacedName, widget)
+			By("creating the custom resource for the Kind MetricAutoscaler")
+			err := k8sClient.Get(ctx, typeNamespacedName, metricautoscaler)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &appsv1.Widget{
+				resource := &appsv1.MetricAutoscaler{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      resourceName,
 						Namespace: resourceNamespace,
@@ -62,16 +62,16 @@ var _ = Describe("Widget Controller", func() {
 
 		AfterEach(func() {
 			// TODO(user): Cleanup logic after each test, like removing the resource instance.
-			resource := &appsv1.Widget{}
+			resource := &appsv1.MetricAutoscaler{}
 			err := k8sClient.Get(ctx, typeNamespacedName, resource)
 			Expect(err).NotTo(HaveOccurred())
 
-			By("Cleanup the specific resource instance Widget")
+			By("Cleanup the specific resource instance MetricAutoscaler")
 			Expect(k8sClient.Delete(ctx, resource)).To(Succeed())
 		})
 		It("should successfully reconcile the resource", func() {
 			By("Reconciling the created resource")
-			controllerReconciler := &WidgetReconciler{
+			controllerReconciler := &MetricAutoscalerReconciler{
 				Client: k8sClient,
 				Scheme: k8sClient.Scheme(),
 			}
