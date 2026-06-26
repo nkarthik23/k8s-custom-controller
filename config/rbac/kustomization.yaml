@@ -25,7 +25,5 @@ resources:
 - metricautoscaler_admin_role.yaml
 - metricautoscaler_editor_role.yaml
 - metricautoscaler_viewer_role.yaml
-- widget_admin_role.yaml
-- widget_editor_role.yaml
-- widget_viewer_role.yaml
+
 

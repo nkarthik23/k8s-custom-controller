@@ -178,7 +178,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	
 	if err := (&controller.MetricAutoscalerReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
