@@ -17,9 +17,9 @@ func metricsHandler(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4")
-	fmt.Fprintf(w, "# HELP queue_depth Number of items waiting in the queue\n")
-	fmt.Fprintf(w, "# TYPE queue_depth gauge\n")
-	fmt.Fprintf(w, "queue_depth %f\n", queueDepth)
+	_, _ = fmt.Fprintf(w, "# HELP queue_depth Number of items waiting in the queue\n")
+	_, _ = fmt.Fprintf(w, "# TYPE queue_depth gauge\n")
+	_, _ = fmt.Fprintf(w, "queue_depth %f\n", queueDepth)
 }
 
 func setHandler(w http.ResponseWriter, r *http.Request) {
