@@ -1,9 +1,11 @@
 apiVersion: apps.yourdomain.dev/v1
 kind: MetricAutoscaler
 metadata:
-  labels:
-    app.kubernetes.io/name: k8s-custom-controller
-    app.kubernetes.io/managed-by: kustomize
-  name: metricautoscaler-sample
+  name: queue-autoscaler
+  namespace: default
 spec:
-  # TODO(user): Add fields here
+  targetDeployment: metric-simulator
+  prometheusQuery: queue_depth
+  threshold: "50"
+  minReplicas: 1
+  maxReplicas: 5

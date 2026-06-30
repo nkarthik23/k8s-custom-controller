@@ -179,8 +179,9 @@ func main() {
 	}
 
 	if err := (&controller.MetricAutoscalerReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:        mgr.GetClient(),
+		Scheme:        mgr.GetScheme(),
+		PrometheusURL: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090",
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "Failed to create controller", "controller", "metricautoscaler")
 		os.Exit(1)
