@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	promapi "github.com/prometheus/client_golang/api"
 	promv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
 	appsv1k8s "k8s.io/api/apps/v1"
@@ -22,8 +21,9 @@ import (
 // MetricAutoscalerReconciler reconciles a MetricAutoscaler object
 type MetricAutoscalerReconciler struct {
 	client.Client
-	Scheme         *runtime.Scheme
-	PrometheusURL  string
+	Scheme        *runtime.Scheme
+	PrometheusURL string
+	PromAPI       promv1.API
 }
 
 // +kubebuilder:rbac:groups=apps.yourdomain.dev,resources=metricautoscalers,verbs=get;list;watch;create;update;patch;delete
@@ -42,16 +42,8 @@ func (r *MetricAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Req
 
 	log.Info("Reconciling", "name", autoscaler.Name)
 
-	// Step 2: Query Prometheus for the current metric value
-	promClient, err := promapi.NewClient(promapi.Config{
-		Address: r.PrometheusURL,
-	})
-	if err != nil {
-		return ctrl.Result{}, fmt.Errorf("failed to create Prometheus client: %w", err)
-	}
-
-	promAPI := promv1.NewAPI(promClient)
-	result, warnings, err := promAPI.Query(ctx, autoscaler.Spec.PrometheusQuery, time.Now())
+	// Step 2: Query Prometheus using server time (time.Time{} omits timestamp)
+	result, warnings, err := r.PromAPI.Query(ctx, autoscaler.Spec.PrometheusQuery, time.Time{})
 	if err != nil {
 		return ctrl.Result{}, fmt.Errorf("failed to query Prometheus: %w", err)
 	}
@@ -100,7 +92,7 @@ func (r *MetricAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Req
 		}
 	}
 
-	// Step 7: Requeue after 15 seconds to check again
+	// Step 7: Requeue after 15 seconds
 	return ctrl.Result{RequeueAfter: 15 * time.Second}, nil
 }
 

@@ -37,6 +37,8 @@ import (
 
 	appsv1 "github.com/nkarthik23/k8s-custom-controller/api/v1"
 	"github.com/nkarthik23/k8s-custom-controller/internal/controller"
+	promapi "github.com/prometheus/client_golang/api"
+	promv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -178,10 +180,19 @@ func main() {
 		os.Exit(1)
 	}
 
+	promClient, err := promapi.NewClient(promapi.Config{
+		Address: "http://localhost:9090",
+	})
+	if err != nil {
+		setupLog.Error(err, "Failed to create Prometheus client")
+		os.Exit(1)
+	}
+
 	if err := (&controller.MetricAutoscalerReconciler{
 		Client:        mgr.GetClient(),
 		Scheme:        mgr.GetScheme(),
-		PrometheusURL: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090",
+		PrometheusURL: "http://localhost:9090",
+		PromAPI:       promv1.NewAPI(promClient),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "Failed to create controller", "controller", "metricautoscaler")
 		os.Exit(1)

@@ -5,7 +5,7 @@ metadata:
   namespace: default
 spec:
   targetDeployment: metric-simulator
-  prometheusQuery: queue_depth
+  prometheusQuery: "queue_depth"
   threshold: "50"
   minReplicas: 1
   maxReplicas: 5
