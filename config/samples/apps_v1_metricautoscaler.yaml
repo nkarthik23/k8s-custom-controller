@@ -4,8 +4,8 @@ metadata:
   name: queue-autoscaler
   namespace: default
 spec:
-  targetDeployment: metric-simulator
-  prometheusQuery: "queue_depth"
-  threshold: "50"
+  targetDeployment: inference-server
+  prometheusQuery: "queue_depth{container='inference-server'}"
+  threshold: "5"
   minReplicas: 1
-  maxReplicas: 5
+  maxReplicas: 2

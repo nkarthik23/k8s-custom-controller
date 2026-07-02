@@ -9,3 +9,6 @@
 # Re-include Go module files
 !go.mod
 !go.sum
+# Re-include inference server files
+!cmd/inference-server/app.py
+!cmd/inference-server/requirements.txt
