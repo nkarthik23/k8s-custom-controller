@@ -180,22 +180,27 @@ func main() {
 		os.Exit(1)
 	}
 
+	prometheusURL := os.Getenv("PROMETHEUS_URL")
+	if prometheusURL == "" {
+    	prometheusURL = "http://localhost:9090"
+	}
 	promClient, err := promapi.NewClient(promapi.Config{
-		Address: "http://localhost:9090",
+    	Address: prometheusURL,
 	})
+
 	if err != nil {
 		setupLog.Error(err, "Failed to create Prometheus client")
 		os.Exit(1)
 	}
 
 	if err := (&controller.MetricAutoscalerReconciler{
-		Client:        mgr.GetClient(),
-		Scheme:        mgr.GetScheme(),
-		PrometheusURL: "http://localhost:9090",
-		PromAPI:       promv1.NewAPI(promClient),
+    	Client:        mgr.GetClient(),
+    	Scheme:        mgr.GetScheme(),
+    	PrometheusURL: prometheusURL,
+    	PromAPI:       promv1.NewAPI(promClient),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "Failed to create controller", "controller", "metricautoscaler")
-		os.Exit(1)
+    	setupLog.Error(err, "Failed to create controller", "controller", "metricautoscaler")
+    	os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder
 

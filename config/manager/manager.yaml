@@ -63,8 +63,12 @@ spec:
         args:
           - --leader-elect
           - --health-probe-bind-address=:8081
-        image: controller:latest
+        image: k8s-custom-controller:v2
+        imagePullPolicy: Never
         name: manager
+        env:
+        - name: PROMETHEUS_URL
+          value: "http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
         ports:
         - containerPort: 8081
           name: health
