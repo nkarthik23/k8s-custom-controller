@@ -13,31 +13,20 @@ This project implements a custom Kubernetes controller that:
 
 The result: when inference request load spikes, replicas scale up automatically. When load drops, replicas scale back down — no human intervention required.
 
-## itecture┌─────────────────────────────────────────────────────────┐
+## Architecture
 
-│                    k3s Cluster (3 nodes)                 │
+```mermaid
+flowchart TD
+    CRD[MetricAutoscaler CRD\ntargetDeployment, prometheusQuery\nthreshold, minReplicas, maxReplicas]
+    Controller[Controller\nGo / controller-runtime\nReconcile every 15s]
+    Prometheus[Prometheus\nkube-prometheus-stack]
+    Inference[Inference Server\nDistilBERT / FastAPI\n/predict and /metrics]
 
-│                                                         │
-
-│  ┌─────────────────┐     ┌──────────────────────────┐  │
-
-│  │ MetricAutoscaler│────▶│  controller (Go/          │  │
-
-│  │ CRD             │     │  controller-runtime)      │  │
-
-│  └─────────────────┘     └──────────┬───────────────┘  │
-
-│                                     │                   │
-
-│                          ┌──────────▼───────────────┐  │
-
-│                          │      PrometheuAPI)       │  │
-
-│                          │  /predict  /metrics       │  │
-
-│                          └──────────────────────────┘  │
-
-└─────────────────────────────────────────────────────────┘
+    CRD -->|watched by| Controller
+    Controller -->|queries queue_depth| Prometheus
+    Controller -->|scales replicas| Inference
+    Prometheus -->|scrapes /metrics every 15s| Inference
+```
 
 ## Stack
 
