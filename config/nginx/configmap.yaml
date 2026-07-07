@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: default
+data:
+  nginx.conf: |
+    events {}
+
+    http {
+        upstream inference_backend {
+            server inference-server:8080;
+        }
+
+        server {
+            listen 80;
+
+            location / {
+                proxy_pass http://inference_backend;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+            }
+        }
+    }
